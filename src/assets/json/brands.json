@@ -1,0 +1,35 @@
+{
+  "facetResponse": {
+    "facets": [
+      {
+        "Id": "Brand",
+        "Type": "TERMS",
+        "attributeDisplayName": "Brand",
+        "OfVariant": false,
+        "attributeName": "brand",
+        "Values": [
+          {
+            "Count": 6,
+            "Param": "brand_SOLR_en_ss_: \"AIEK\"",
+            "attributeValue": "AIEK"
+          },
+          {
+            "Count": 16,
+            "Param": "brand_SOLR_en_ss_: \"Google\"",
+            "attributeValue": "Google"
+          },
+          {
+            "Count": 2,
+            "Param": "brand_SOLR_en_ss_: \"I Life\"",
+            "attributeValue": "I Life"
+          },
+          {
+            "Count": 4,
+            "Param": "brand_SOLR_en_ss_: \"Meizu\"",
+            "attributeValue": "Meizu"
+          }
+        ]
+      }
+    ]
+  }
+}
