@@ -11,34 +11,59 @@ class MobileSelector extends Component {
     super(props);
     this.state = {
       isBrandSelected: false,
-      isModelSelected: false,
-      dropdownOpen: false
+      brandOpen: false,
+      modelOpen: false,
+      selectedBrand: "select brand",
+      selectedModel: "select model"
     }
   }
 
   componentDidMount(){
-    const  { BRANDS } = API;
-    BRANDS().then( res => this.props.getBrands(res))
+    API.getAllBrands().then( res => this.props.getBrands(res))
   }
 
-  toggle = () => {
+  componentDidUpdate(prevProps){
+    if(prevProps.models !== this.props.models);
+  }
+
+  toggle = (value) => {
     this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
+      brandOpen: value === "brand" ? !prevState.brandOpen : prevState.brandOpen,
+      modelOpen: value === "model" ? !prevState.modelOpen : prevState.modelOpen
     }));
   }
 
+  selectBrandItem = (value) => {
+    this.setState({
+      isBrandSelected: true,
+      selectedBrand: value,
+      brandOpen: false
+    });
+    API.getBrandModels(value).then( res => this.props.getModels(res))
+  }
+
+  selectModelItem = (catalogId, productId) => {
+    this.setState({
+      isBrandSelected: false,
+      selectedBrand: "select brand",
+      selectedModel: "select model"
+    });
+    this.props.onModelClick(catalogId, productId);
+    this.props.getModels([]);
+  }
+
   render() {
-    const { isBrandSelected, isModelSelected } = this.state;
+    const { isBrandSelected, isModelSelected, selectedBrand, selectedModel, brandOpen, modelOpen } = this.state;
     const { brands, models } = this.props;
     return (
       <div>
-        <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-          <DropdownToggle>select</DropdownToggle>
+        <Dropdown isOpen={brandOpen} toggle={ () => this.toggle("brand")}>
+          <DropdownToggle>{selectedBrand}</DropdownToggle>
           <DropdownMenu>
             {
               brands.map( (brand,index) => {
                 return (
-                  <DropdownItem key={index}>{brand.attributeValue}</DropdownItem>
+                  <DropdownItem key={index} onClick={() => this.selectBrandItem(brand.attributeValue)} >{brand.attributeValue}</DropdownItem>
                 )
               })
             }
@@ -46,11 +71,16 @@ class MobileSelector extends Component {
         </Dropdown>
         {
           isBrandSelected && 
-          <Dropdown>
-            <DropdownToggle>select</DropdownToggle>
+          <Dropdown isOpen={modelOpen} toggle={() => this.toggle("model")} className="py-4">
+            <DropdownToggle>{selectedModel}</DropdownToggle>
             <DropdownMenu>
               {
-
+                models.map( (model, index) => {
+                  const { attributes } = model;
+                  return (
+                    <DropdownItem key={index} onClick={() => this.selectModelItem(attributes.catalogId, attributes.productId)} >{attributes.calculated_display_name[0]}</DropdownItem>
+                  )
+                })
               }
             </DropdownMenu>
           </Dropdown>
