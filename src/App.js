@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, CardDeck } from "reactstrap";
+import { Container, Row, Col, CardDeck, Card } from "reactstrap";
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 
@@ -22,12 +22,19 @@ class App extends Component {
     API.getProductDetails(catalog_id, product_id)
       .then( res => {
         var products =  this.state.productsForCompare;
-        products.push(res[0]);
+        var product = res[0];
+        products.push(product);
         this.setState(prevState => ({
           count: prevState.count+1,
           productsForCompare: products
         }));
-        this.props.getPoductDetails(res[0]);
+
+        const data = product.product_details.catalog_details.attribute_map;
+        Object.keys(data).map(key => {
+          let obj= []
+          obj.push(data[key])
+          console.log()
+        })
       });
   }
   render() {
@@ -35,15 +42,19 @@ class App extends Component {
     return (
       <Container fluid={true}>
         <Row>
-          <Col xs="3">Aside left</Col>
-          <Col xs="9">
-            <CardDeck>
+          <Col xs="2">Aside left</Col>
+          <Col xs="10">
+            <CardDeck className="border-0">
               {
-                productsForCompare.length > 0 && productsForCompare.map( product => {
-                  return JSON.stringify(product);
+                productsForCompare.length > 0 && productsForCompare.map( (product, index) => {
+                  return(
+                    <Card key={index}>
+                      {JSON.stringify(product)}
+                    </Card>
+                  )
                 })
               }
-              {count <= 4 && <MobileSelector onModelClick={this.onModelClick}/>}
+              {count <= 4 && <Card className="border-0"><MobileSelector onModelClick={this.onModelClick}/></Card>}
             </CardDeck>
           </Col>
         </Row>
