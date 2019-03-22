@@ -1,13 +1,15 @@
 import { SELECTOR_TYPES } from "./actionTypes";
 
-export function getBrands() {
+export function getBrands(brands) {
     return {
-        type: SELECTOR_TYPES.BRANDS.GET_BRANDS
+        type: SELECTOR_TYPES.GET_BRANDS,
+        brands
     }
 }
 
-export function getModels() {
+export function getModels(models) {
     return {
-        type: SELECTOR_TYPES.BRANDS.GET_MODELS
+        type: SELECTOR_TYPES.GET_MODELS,
+        models
     }
 }
