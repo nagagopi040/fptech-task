@@ -1,7 +1,8 @@
 import { APP_TYPES } from "./appActions";
 
 const initialState = {
-	product: {}
+	product: {},
+	filters: []
 };
 
 export default function (state = initialState, action) {
@@ -10,6 +11,11 @@ export default function (state = initialState, action) {
 			return {
 				...state,
 				product: action.product
+			};
+		case APP_TYPES.GET_FILTERS_DATA:
+			return {
+				...state,
+				filters: action.filters
 			};
 		default:
 			return state;
