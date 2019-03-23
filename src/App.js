@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
-import { Container, Row, Col, Card, CardTitle, CardDeck, CardHeader, CardText, Label, Input } from "reactstrap";
+import { Container, Row, Col, Card,CardBody, CardTitle, CardDeck, CardHeader, CardText,CardImg, Label, Input } from "reactstrap";
 
 import MobileSelector from "./components/mobile-selector";
 import { API } from "./utils";
@@ -16,7 +16,8 @@ class App extends Component {
       count: 0,
       productsForCompare: [],
       filterValues: [],
-      attribute_categories: []
+      attribute_categories: [],
+      catagery_attributes: {}
     }
   }
 
@@ -34,27 +35,19 @@ class App extends Component {
     })
   }
 
-  onModelClick = (catalog_id, product_id) => {
-    API.getProductDetails(catalog_id, product_id)
+  onModelClick = (model) => {
+    const { catalogId, productId } = model.attributes;
+    API.getProductDetails(catalogId, productId)
       .then( res => {
         var products =  this.state.productsForCompare;
+        res[0].productDetails = model;
         var product = res[0];
         products.push(product);
         this.setState(prevState => ({
           count: prevState.count+1,
           productsForCompare: products
         }));
-
-        const data = product.product_details.catalog_details.attribute_map;
-        Object.keys(data).map(key => {
-          let obj= []
-          obj.push(data[key])
-        })
       });
-  }
-
-  componentWillReceiveProps(nextProps){
-    this.setState({productForCompare: nextProps});
   }
 
   updateFilterValues = (value) => {
@@ -67,10 +60,26 @@ class App extends Component {
     })}
   }
 
-  render() {
-    const { productsForCompare, count, filterValues, attribute_categories, productForCompare } = this.state;
+  renderSpecifications = (data) => {
     const { filters } = this.props;
-    console.log(productForCompare);
+    return Object.keys(filters).map(key => {
+      return (
+        <Card className="pb-5 mb-5 border-0">
+          {
+            filters[key].map( (filter, index) => {
+              const attribute_name = filter.name;
+              return(
+                <CardText key={index} className="text-center">{ data[attribute_name] && data[attribute_name].attribute_values && data[attribute_name].attribute_values.length > 0 && data[attribute_name].attribute_values[0].value ? data[attribute_name].attribute_values[0].value : "NA"}</CardText>
+              )
+            })
+          }
+        </Card>)
+    })
+  }
+
+  render() {
+    const { productsForCompare, count, filterValues, attribute_categories } = this.state;
+    const { filters } = this.props;
 
     const attributesContainer = attribute_categories.map( (attribute,index) => {
       return (
@@ -108,17 +117,26 @@ class App extends Component {
             {attributes}
           </Col>
           <Col xs="10">
-            <CardDeck className="border-0">
+            <CardDeck className="border-0 text-center">
               {
                 productsForCompare.length > 0 && productsForCompare.map( (product, index) => {
+                  const { attributes } = product.productDetails;
+                  const { attribute_map } = product.product_details.catalog_details;
                   return(
-                    <Card key={index}>
-                      {JSON.stringify(product)}
+                    <Card key={index} className="border-0">
+                      <CardImg src="https://www.91-img.com/pictures/126849-v6-honor-10-mobile-phone-large-1.jpg" height={300} alt="product image" />
+                      <CardBody className="text-primary pb-4">
+                        <CardTitle>{attributes.brand[0]}</CardTitle>
+                        <CardText>{attributes.calculated_display_name[0]}</CardText>
+                      </CardBody>
+                      <CardBody className="pb-0">
+                        {this.renderSpecifications(attribute_map)}
+                      </CardBody>>
                     </Card>
                   )
                 })
               }
-              {count <= 4 && <Card className="border-0"><MobileSelector onModelClick={this.onModelClick}/></Card>}
+              {count <= 4 && <Card className="border-0 text-left"><MobileSelector onModelClick={this.onModelClick}/></Card>}
             </CardDeck>
           </Col>
         </Row>

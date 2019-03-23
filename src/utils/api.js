@@ -27,16 +27,21 @@ export const API = {
     getProductDetails: async (catalog_id, product_id) => {
         return productResponse.filter(product => product.product_id === product_id && product.product_details.catalog_details.catalog_id === catalog_id)
     },
-    groupFilters: async (items, key) =>
-        items.reduce(
+    groupFilterData: (data) => {
+        let items= []
+        Object.keys(data).map(key => {
+            items.push(data[key])
+        })
+        return items.reduce(
             (result, item) => ({
                 ...result,
-                [item[key]]: [
-                    ...(result[item[key]] || []),
+                [item.attribute_category_name]: [
+                    ...(result[item.attribute_category_name] || []),
                     item
                 ],
             }), {}
-        ),
+        )
+    },
     getAllFilters: async () => {
         let data = [];
         productResponse.forEach(result => {

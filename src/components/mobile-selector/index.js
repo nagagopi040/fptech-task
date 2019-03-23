@@ -78,7 +78,7 @@ class MobileSelector extends Component {
                 models.map( (model, index) => {
                   const { attributes } = model;
                   return (
-                    <DropdownItem key={index} onClick={() => this.selectModelItem(attributes.catalogId, attributes.productId)} >{attributes.calculated_display_name[0]}</DropdownItem>
+                    <DropdownItem key={index} onClick={() => this.selectModelItem(model)} >{attributes.calculated_display_name[0]}</DropdownItem>
                   )
                 })
               }
