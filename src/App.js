@@ -125,13 +125,13 @@ class App extends Component {
                   return(
                     <Card key={index} className="border-0">
                       <CardImg src="https://www.91-img.com/pictures/126849-v6-honor-10-mobile-phone-large-1.jpg" height={300} alt="product image" />
-                      <CardBody className="text-primary pb-4">
+                      <CardBody className="text-primary px-0 mb-4">
                         <CardTitle>{attributes.brand[0]}</CardTitle>
                         <CardText>{attributes.calculated_display_name[0]}</CardText>
                       </CardBody>
-                      <CardBody className="pb-0">
+                      <CardBody className="p-0">
                         {this.renderSpecifications(attribute_map)}
-                      </CardBody>>
+                      </CardBody>
                     </Card>
                   )
                 })
