@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { Container, Row, Col, Card,CardBody, CardTitle, CardDeck, CardHeader, CardText,CardImg, Label, Input } from "reactstrap";
 
 import MobileSelector from "./components/mobile-selector";
+import Filter from "./components/filter";
 import { API } from "./utils";
 import { getPoductDetails, getFilterData } from "./appActions";
 
@@ -15,22 +16,17 @@ class App extends Component {
     this.state = {
       count: 0,
       productsForCompare: [],
-      filterValues: [],
-      attribute_categories: [],
-      catagery_attributes: {}
+      filters: [],
+      filtersData: []
     }
   }
 
   componentDidMount() {
     API.getAllFilters().then(res => {
       this.props.getFilterData(res);
-      let attribute_categories = [];
-      for(var item in res) {
-        attribute_categories.push(item)
-      }
       this.setState({
-        filterValues: attribute_categories,
-        attribute_categories
+        filters: res,
+        filtersData: res
       })
     })
   }
@@ -50,26 +46,22 @@ class App extends Component {
       });
   }
 
-  updateFilterValues = (value) => {
-    var array = this.state.filterValues;
-    var index = array.indexOf(value);
-    if (index !== -1) array.splice(index, 1);
-    if(this.state.filterValues !== array){
-      this.setState({
-      filterValues: array
-    })}
+  getUpdatedFilterData = (data) => {
+    this.setState({
+      filtersData: data
+    })
   }
 
   renderSpecifications = (data) => {
-    const { filters } = this.props;
+    const { filters, filtersData } = this.state;
     return Object.keys(filters).map(key => {
       return (
-        <Card className="pb-5 mb-5 border-0">
+        <Card key={key} className="pb-5 mb-5 border-0">
           {
-            filters[key].map( (filter, index) => {
+            filtersData[key] && filtersData[key].map( (filter, index) => {
               const attribute_name = filter.name;
               return(
-                <CardText key={index} className="text-center">{ data[attribute_name] && data[attribute_name].attribute_values && data[attribute_name].attribute_values.length > 0 && data[attribute_name].attribute_values[0].value ? data[attribute_name].attribute_values[0].value : "NA"}</CardText>
+                <CardText key={index} className="text-center">{ data[attribute_name] && data[attribute_name].attribute_values[0].value ? data[attribute_name].attribute_values[0].value : "NA"}</CardText>
               )
             })
           }
@@ -78,44 +70,12 @@ class App extends Component {
   }
 
   render() {
-    const { productsForCompare, count, filterValues, attribute_categories } = this.state;
-    const { filters } = this.props;
+    const { productsForCompare, count } = this.state;
 
-    const attributesContainer = attribute_categories.map( (attribute,index) => {
-      return (
-        <CardTitle key={index} className="m-0" tag="p">
-          <Label check className="px-2"><Input type="checkbox" onChange={() => this.updateFilterValues(attribute)} checked={filterValues.includes(attribute)}/>{' '}{attribute}</Label>
-        </CardTitle>
-      )
-    })
-
-    const attributes = Object.entries(filters).map( (obj, index) => {
-      return(
-        <div key={index}>
-        { filterValues.includes(obj[0]) &&
-          <Card className="border-0 pb-4">
-            <CardTitle tag="h5">{obj[0]}</CardTitle>
-            {
-              obj[1].map( (attribute, index) => {
-                return(
-                  <CardText key={index} className="text-center">{attribute.display_string}</CardText>
-                )
-              })}
-          </Card>
-        }
-        </div>
-      )
-    })
     return (
       <Container fluid={true}>
         <Row>
-          <Col xs="2">
-            <Card className="border-0 pb-4">
-              <CardHeader tag="h4" className="px-0 border-0">Features</CardHeader>
-              {attributesContainer}
-            </Card>
-            {attributes}
-          </Col>
+          <Col xs="2"><Filter getUpdatedFilterData={this.getUpdatedFilterData} /></Col>
           <Col xs="10">
             <CardDeck className="border-0 text-center">
               {

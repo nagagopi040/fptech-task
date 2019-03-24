@@ -53,17 +53,17 @@ class MobileSelector extends Component {
   }
 
   render() {
-    const { isBrandSelected, isModelSelected, selectedBrand, selectedModel, brandOpen, modelOpen } = this.state;
+    const { isBrandSelected, selectedBrand, selectedModel, brandOpen, modelOpen } = this.state;
     const { brands, models } = this.props;
     return (
       <div>
         <Dropdown isOpen={brandOpen} toggle={ () => this.toggle("brand")}>
           <DropdownToggle>{selectedBrand}</DropdownToggle>
-          <DropdownMenu>
+          <DropdownMenu persist={true}>
             {
               brands.map( (brand,index) => {
                 return (
-                  <DropdownItem key={index} onClick={() => this.selectBrandItem(brand.attributeValue)} >{brand.attributeValue}</DropdownItem>
+                  <DropdownItem key={index}  onClick={() => this.selectBrandItem(brand.attributeValue)} >{brand.attributeValue}</DropdownItem>
                 )
               })
             }
