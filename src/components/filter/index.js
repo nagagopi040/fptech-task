@@ -11,7 +11,6 @@ class Filter extends Component {
     super(props);
     this.state = {
       filterValues: [],
-      filterHeaders: [],
       filteredData: []
     }
   }
@@ -31,6 +30,13 @@ class Filter extends Component {
     })
   }
 
+  setFilterData = (obj, arr) => {
+    this.setState({
+      filteredData: obj,
+      filterValues: arr
+    })
+  }
+
   updateFilterValues = (attribute) => {
     const { value, checked } = this[attribute].props;
     const { filters } = this.props;
@@ -42,27 +48,19 @@ class Filter extends Component {
       var index = array.indexOf(value);
       if (index !== -1) array.splice(index, 1);
       delete obj[value]
-      this.setState({
-        filteredData: obj,
-        filterValues: array
-      })
+      this.setFilterData(obj, array)
     } else if(!checked){
       const data = filters[attribute];
       filterValues.push(attribute)
       obj[attribute] = data;
-      this.setState({
-        filteredData: obj,
-        filterValues: filterValues
-      })
+      this.setFilterData(obj, filterValues)
     }
     this.props.getUpdatedFilterData(obj);
   }
 
   clearAllFilterData = (e) => {
-    this.setState({
-      filteredData: [],
-      filterValues: []
-    })
+    this.setFilterData([], [])
+    this.props.getUpdatedFilterData({}, []);
   }
 
   render(){
